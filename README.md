@@ -20,9 +20,9 @@ A clean and simple Flask app that lets you search, view, and download evaluation
 
 ---
 
-## 🧪 Live Demo (Coming Soon)
+## 🧪 Screenshot
+![TQAuditor Web Screenshot](screenshot.png)
 
-Want to try it online? Stay tuned for a hosted demo or run it yourself (below)!
 
 ---
 
