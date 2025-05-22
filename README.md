@@ -21,7 +21,7 @@ A clean and simple Flask app that lets you search, view, and download evaluation
 ---
 
 ## 🧪 Screenshot
-![TQAuditor Web Screenshot](screenshot.png)
+![TQAuditor Web Screenshot](Screenshot.png)
 
 
 ---
