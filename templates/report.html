@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Project Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2 { color: #333; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+        p { margin: 5px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        table, th, td { border: 1px solid #888; }
+        th, td { padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>Project Report</h1>
+
+    <h2>Main</h2>
+    <p><strong>ID:</strong> {{ project.id }}</p>
+    <p><strong>Client Name:</strong> {{ project.client.name }}</p>
+    <p><strong>Name:</strong> {{ project.name }}</p>
+    <p><strong>Spec Name:</strong> {{ project.spec.name }}</p>
+    <p><strong>Service Name:</strong> {{ project.service.name }}</p>
+    <p><strong>Status:</strong> {{
+        {
+            1: "Files upload",
+            2: "Comparison",
+            3: "Evaluation",
+            4: "Translator's review",
+            5: "Arbitration",
+            6: "Completed"
+        }[project.stage_id]
+    }}</p>
+    <p><strong>Evaluation:</strong> {{ project.evaluation_summary }}</p>
+    <p><strong>Score:</strong> {{ project.score }}</p>
+    <p><strong>Mark:</strong> {{ project.mark }}</p>
+    <p><strong>Created at:</strong> {{ project.created_at }}</p>
+
+    <h2>Languages</h2>
+    <p><strong>Source:</strong> {{ project.sourceLang.tag }}</p>
+    <p><strong>Target:</strong> {{ project.targetLang.tag }}</p>
+
+    <h2>Project Team</h2>
+    <p><strong>Manager:</strong> {{ project.manager.first_name }} {{ project.manager.last_name }}, {{ project.manager.company }}</p>
+    <p><strong>Translator:</strong> {{ project.translator.first_name }} {{ project.translator.last_name }}, {{ project.translator.company }}</p>
+    <p><strong>Evaluator:</strong> {{ project.evaluator.first_name }} {{ project.evaluator.last_name }}, {{ project.evaluator.company }}</p>
+    <p><strong>Arbiter:</strong> {{ project.arbiter.first_name }} {{ project.arbiter.last_name }}, {{ project.arbiter.company }}</p>
+
+    <h2>Evaluation Details</h2>
+    <p><strong>Word count for evaluator:</strong> {{ project.word_count_for_evaluator or "–" }}</p>
+    <p><strong>Note for Evaluator:</strong> {{ project.note_for_evaluator or "–" }}</p>
+    <p><strong>Evaluation count:</strong> {{ project.evaluation_count }}</p>
+
+    <h2>Mistake Counts</h2>
+    <table>
+        <thead>
+            <tr><th>Type</th><th>Severity</th><th>Count</th></tr>
+        </thead>
+        <tbody>
+            {% for m in mistakes %}
+            <tr>
+                <td>{{ m.type.name }}</td>
+                <td>{{ m.severity.name }}</td>
+                <td>{{ m.count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

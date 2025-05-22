@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TQAuditor Extractor</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script>
+    const stageMap = {
+      1: "Files upload",
+      2: "Comparison",
+      3: "Evaluation",
+      4: "Translator's review",
+      5: "Arbitration",
+      6: "Completed"
+    };
+
+    async function showDetails(id, apiKey, baseUrl) {
+      const detailsDiv = document.getElementById("details");
+      const mistakesDiv = document.getElementById("mistakes");
+      detailsDiv.innerHTML = "<em>Loading...</em>";
+      mistakesDiv.innerHTML = "<em>Loading...</em>";
+
+      const detailRes = await fetch(`/project/${id}/details?api_key=${apiKey}&base_url=${baseUrl}`);
+      const detailData = await detailRes.json();
+
+      if (detailData.error) {
+        detailsDiv.innerHTML = `<p class="error">${detailData.error}</p>`;
+        return;
+      }
+
+      const formatPerson = p => `${p.first_name} ${p.last_name}, ${p.company}`;
+      detailsDiv.innerHTML = `
+        <h2>Main</h2>
+        <p><strong>ID:</strong> ${detailData.id}</p>
+        <p><strong>Client Name:</strong> ${detailData.client.name}</p>
+        <p><strong>Name:</strong> ${detailData.name}</p>
+        <p><strong>Spec Name:</strong> ${detailData.spec.name}</p>
+        <p><strong>Service Name:</strong> ${detailData.service.name}</p>
+        <p><strong>Status:</strong> ${stageMap[detailData.stage_id]}</p>
+        <p><strong>Evaluation:</strong> ${detailData.evaluation_summary}</p>
+        <p><strong>Score:</strong> ${detailData.score}</p>
+        <p><strong>Mark:</strong> ${detailData.mark}</p>
+        <p><strong>Created at:</strong> ${detailData.created_at}</p>
+
+        <h2>Languages</h2>
+        <p><strong>Source:</strong> ${detailData.sourceLang.tag}</p>
+        <p><strong>Target:</strong> ${detailData.targetLang.tag}</p>
+
+        <h2>Project Team</h2>
+        <p><strong>Manager:</strong> ${formatPerson(detailData.manager)}</p>
+        <p><strong>Translator:</strong> ${formatPerson(detailData.translator)}</p>
+        <p><strong>Evaluator:</strong> ${formatPerson(detailData.evaluator)}</p>
+        <p><strong>Arbiter:</strong> ${formatPerson(detailData.arbiter)}</p>
+
+        <h2>Evaluation Details</h2>
+        <p><strong>Word count for evaluator:</strong> ${detailData.word_count_for_evaluator ?? "–"}</p>
+        <p><strong>Note for Evaluator:</strong> ${detailData.note_for_evaluator || "–"}</p>
+        <p><strong>Evaluation count:</strong> ${detailData.evaluation_count}</p>
+
+        <hr>
+        <a href="/project/${detailData.id}/report-docx?api_key=${apiKey}&base_url=${baseUrl}" target="_blank">
+        📝 Download DOCX Report
+        </a>
+      `;
+
+      const mistakeRes = await fetch(`/project/${id}/mistakes?api_key=${apiKey}&base_url=${baseUrl}`);
+      const mistakes = await mistakeRes.json();
+
+      if (mistakes.error) {
+        mistakesDiv.innerHTML = `<p class="error">${mistakes.error}</p>`;
+        return;
+      }
+
+      let table = `
+        <h2>Mistake Breakdown</h2>
+        <table>
+          <thead><tr><th>Type</th><th>Severity</th><th>Count</th></tr></thead>
+          <tbody>
+      `;
+      for (const item of mistakes) {
+        table += `<tr>
+          <td>${item.type.name}</td>
+          <td>${item.severity.name}</td>
+          <td>${item.count}</td>
+        </tr>`;
+      }
+      table += "</tbody></table>";
+      mistakesDiv.innerHTML = table;
+    }
+  </script>
+
+</head>
+<body>
+<div class="page">
+  <h1>TQAuditor Extractor</h1>
+  <form method="post">
+    <label>Base URL: <input type="text" name="base_url" value="{{ base_url or 'http://localhost:8123' }}" placeholder="http://localhost:8123"></label>
+    <label>API Key: <input type="text" name="api_key" value="{{ api_key }}"></label>
+
+    <button type="submit">Search</button>
+    </form>
+
+  {% if error %}
+    <p class="error">{{ error }}</p>
+  {% endif %}
+  {% if projects %}
+  <div id="filter-bar">
+      <input type="text" id="filter-id" placeholder="Filter by ID..." oninput="filterProjects()">
+      <input type="text" id="filter-client" placeholder="Filter by Client..." oninput="filterProjects()">
+      <input type="text" id="filter-name" placeholder="Filter by Name..." oninput="filterProjects()">
+      <select id="filter-status" onchange="filterProjects()">
+          <option value="">All Statuses</option>
+          <option value="Files upload">Files upload</option>
+          <option value="Comparison">Comparison</option>
+          <option value="Evaluation">Evaluation</option>
+          <option value="Translator's review">Translator's review</option>
+          <option value="Arbitration">Arbitration</option>
+          <option value="Completed">Completed</option>
+      </select>
+  </div>
+  {% endif %}
+  <div class="container">
+    <div class="left">
+      {% for project in projects %}
+        <div class="project"
+     onclick="showDetails({{ project.id }}, '{{ api_key }}', '{{ base_url }}')"
+     data-id="{{ project.id }}"
+     data-client="{{ project.client.name }}"
+     data-name="{{ project.name }}"
+     data-status="{{ {
+       1: 'Files upload',
+       2: 'Comparison',
+       3: 'Evaluation',
+       4: 'Translator\'s review',
+       5: 'Arbitration',
+       6: 'Completed'
+     }[project.stage_id] }}">
+  <p><strong>ID:</strong> {{ project.id }}</p>
+  <p><strong>Client:</strong> {{ project.client.name }}</p>
+  <p><strong>Name:</strong> {{ project.name }}</p>
+  <p><strong>Status:</strong> {{ {
+    1: "Files upload",
+    2: "Comparison",
+    3: "Evaluation",
+    4: "Translator's review",
+    5: "Arbitration",
+    6: "Completed"
+  }[project.stage_id] }}</p>
+</div>
+
+      {% endfor %}
+    </div>
+
+    <div class="middle" id="details">
+      <em>Select a project to see details...</em>
+    </div>
+
+    <div class="right" id="mistakes">
+      <em>Mistake summary will appear here...</em>
+    </div>
+  </div>
+  <footer>
+  <div class="footer-content">
+    <span>Made with ❤️ in Berlin</span>
+    <span class="divider">|</span>
+    <span>by <strong>SR</strong></span>
+  </div>
+</footer>
+</div>
+<script>
+  function filterProjects() {
+    const idFilter = document.getElementById("filter-id").value.toLowerCase();
+    const clientFilter = document.getElementById("filter-client").value.toLowerCase();
+    const nameFilter = document.getElementById("filter-name").value.toLowerCase();
+    const statusFilter = document.getElementById("filter-status").value;
+
+    const cards = document.querySelectorAll(".project");
+    cards.forEach(card => {
+      const id = card.dataset.id.toLowerCase();
+      const client = card.dataset.client.toLowerCase();
+      const name = card.dataset.name.toLowerCase();
+      const status = card.dataset.status;
+
+      const matches =
+        id.includes(idFilter) &&
+        client.includes(clientFilter) &&
+        name.includes(nameFilter) &&
+        (!statusFilter || status === statusFilter);
+
+      card.style.display = matches ? "block" : "none";
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+/* === Reset & Base === */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* === Page Container === */
+.page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* === Headings & Text === */
+h1 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 14px;
+  margin-top: 15px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 2px;
+  color: #444;
+}
+
+p {
+  margin: 4px 0;
+}
+
+/* === Form Styling === */
+form {
+  margin-bottom: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+form label {
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+form input {
+  padding: 4px 6px;
+  font-size: 13px;
+}
+
+form button {
+  padding: 4px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* === Filter Bar === */
+#filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+#filter-bar input,
+#filter-bar select {
+  padding: 4px;
+  font-size: 13px;
+  flex: 1;
+}
+
+/* === Main Layout === */
+.container {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.left, .middle, .right {
+  width: 33.3%;
+  border: 1px solid #ccc;
+  padding: 8px;
+  overflow-y: auto;
+  background: #fdfdfd;
+  max-height: 75vh;
+}
+
+.left {
+  background-color: #f5f5f5;
+}
+
+/* === Project Cards === */
+.project {
+  cursor: pointer;
+  padding: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.project:hover {
+  background-color: #e9f0fe;
+}
+
+/* === Tables === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+th, td {
+  border: 1px solid #aaa;
+  padding: 6px;
+  text-align: left;
+}
+
+/* === Errors === */
+.error {
+  color: #b00;
+  font-weight: bold;
+}
+
+/* === Footer === */
+footer {
+  width: 100%;
+  padding: 12px 0;
+  margin-top: auto;
+  text-align: center;
+  font-size: 12px;
+  background: linear-gradient(to right, #e0e0e0, #f9f9f9);
+  border-top: 1px solid #ccc;
+  color: #555;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.footer-content .divider {
+  opacity: 0.5;
+}
